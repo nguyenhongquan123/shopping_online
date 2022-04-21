@@ -1,0 +1,13 @@
+{% extends "home/base.html" %}
+
+{% block content %}
+    <h1>Feed Back</h1>
+    <form action="">
+        <div class="crsf_token">
+            {% csrf_token %}
+        </div>
+        {{form.as_p}}
+        <input class="btn btn-danger" type="submit">
+    </form>
+
+{% endblock content %}

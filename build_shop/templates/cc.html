@@ -1,0 +1,137 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+
+
+{% block head %} 
+    <meta charset="utf-8">
+    <title>Login</title>
+    <link href='http://fonts.googleapis.com/css?family=Ropa+Sans' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'authentication/login.css' %}">
+{% endblock head %}
+
+{% block style_css %}
+  
+{% endblock style_css %}
+
+{% block content %}
+    <div id="login-form">
+
+        <input type="radio"  id="login" name="switch" class="hide">
+        <input type="radio" checked id="signup" name="switch" class="hide">
+
+        <div>
+            <ul class="form-header">
+                <li><label for="login"><i class="fa fa-lock"></i> LOGIN<label for="login"></li>
+                <li><label for="signup"><i class="fa fa-credit-card"></i> REGISTER</label></li>
+            </ul>
+        </div>
+
+        <div class="section-out">
+            <section class="login-section">
+                <div class="login">
+                    <form id="form-login"   method="POST">
+                        {% csrf_token %}
+                        <ul class="ul-list">
+                           {% for field in form %}
+                                <li>
+                                    <span>{{field.name}}</span>
+                                    <div>
+                                        {{field}}
+                                        {{field.errors}}
+                                    </div>
+                                </li>
+
+                            {% endfor %}
+                           <li class="mess"><span>
+                               {% if message %}
+                                    {{message}}
+                               {% endif %}
+                           </span></li>
+                            <input type="hidden" name="form-type" value="login_form">
+                            <li><input id="input-login" type="submit" value="SIGN IN" class="btn" name="submit-login"></li>
+                            
+                        </ul>
+                    </form>
+                </div>
+
+                <div class="social-login">Or sign in with &nbsp;
+                    <a href="" class="fb"><i class="fa fa-facebook"></i></a>
+                    <a href="" class="tw"><i class="fa fa-twitter"></i></a>
+                    <a href="" class="gp"><i class="fa fa-google-plus"></i></a>
+                    <a href="" class="in"><i class="fa fa-linkedin"></i></a>
+                </div>
+            </section>
+
+            <section class="signup-section">
+                <div class="login">
+                    <form action="" method="post">
+                        <ul class="ul-list">
+                            {% csrf_token %}
+                            <li>{{form.username}}
+                                
+                            </li>
+                            <li>
+                                {{form.password_1}}
+                              
+                            </li>
+                            <li>
+                                {{form.password_2}}
+                                {{form.password_2.errors}}
+                            
+                            </li>
+                            <input type="hidden" name="form-type" value="register_form">
+                            <input type="submit" value="submit">
+                        </ul>
+
+                    </form>
+                </div>
+
+                <div class="social-login">Or sign up with &nbsp;
+                    <a href="" class="fb"><i class="fa fa-facebook"></i></a>
+                    <a href="" class="tw"><i class="fa fa-twitter"></i></a>
+                    <a href="" class="gp"><i class="fa fa-google-plus"></i></a>
+                    <a href="" class="in"><i class="fa fa-linkedin"></i></a>
+                </div>
+            </section>
+        </div>
+
+    </div>
+{% endblock content %}
+
+{% block script %}
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      {% comment %}
+
+      <script>
+          $('#form-login').submit(function(e){
+                e.preventDefault()
+                var serializedData=$(this).serialize()
+                $.ajax({
+                    type:'POST',
+                    url:" {% url 'home:login' %}",
+                    data:serializedData,
+                    success: function(response){    
+                        alert(response['message'])
+                    },
+                    error: function(response){
+                        alert("loi!")
+                    }
+                })
+       
+          })
+             
+      {% endcomment %}
+
+          
+          
+      </script>
+{% endblock script %} 
+
+
+
+
+
+
+
+    
+

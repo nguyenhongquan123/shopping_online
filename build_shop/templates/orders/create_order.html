@@ -1,0 +1,59 @@
+{% extends "home/base.html" %}
+
+{% block title %}
+    <title>
+        Create-Order
+    </title>
+{% endblock title %} 
+{% block style %}
+    <style>
+        .main{
+          margin-top:15%;
+        }
+    </style>
+{% endblock style %}
+{% block content %}
+<div class="main">
+  <form id="create-order-form" action="." method="post">
+    <div class="csrf_token">
+      {% csrf_token %}
+    </div>
+    {% for field in form %}
+    <div class="form-group">
+      {% if field in form.visible_fields %}
+        <label for="">{{field.name}}</label>
+      {% endif %}
+      {{field}}
+
+
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+   
+</div>
+{% endblock content %}
+
+{% block script %}
+  <script>
+    $("#id_id").focusout(function(e){
+      e.preventDefault();
+      var id=$(this).val()
+      var csrf_token=document.querySelector('#create-order-form >.csrf_token input').value
+      var data="csrfmiddlewaretoken="+csrf_token+"&id="+id 
+
+      $.ajax({
+        type:'POST',
+        url:"{% url 'orders:validateId' %}",
+        data:data,
+        success:function(reponse){
+          if(reponse['valid']==false){
+            alert("Have Existed Id")
+            $("#id_id").val("concac");            
+          }
+        }
+
+      })
+    })
+  </script>    
+{% endblock script %}

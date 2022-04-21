@@ -1,0 +1,68 @@
+{% extends "home/base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>
+        Order Detail
+    </title>
+{% endblock title %}
+{% block style %}
+    <style>
+        .main{
+            margin-top: 15%;
+        }
+    
+    </style>
+{% endblock style %}
+    
+{% block content  %}  
+    <div class='main'>
+        <div class="row">
+            <div class="col-md-4">
+                <ul class="list-group">
+                    {% for order in orders %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <a href="{% url 'orders:order_detail' order.slug %}">{{order.name}}</a>
+                        <span class="badge badge-primary badge-pill">${{ order.get_total_cost}}</span>
+                    </li>
+                    {% endfor %}
+                  </ul>
+            </div>
+            <div class="col-md-8">
+                <table class="table">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in order_items %}
+                      <tr>
+                        {% with x=forloop.counter%}
+                        <th scope="row">{{x}}</th>
+                        {% endwith %}
+                        <td>{{item.product.name}}</td>
+                        <td>${{item.product.price}}</td>
+                        <td>{{item.quantity}}</td>
+                        <td>{{item.total_price}}</td>
+                      </tr>
+                    {% endfor %}
+                    <tr>
+                        <th scope="row"></th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>${{total_cost_order}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                
+            </div>
+        </div>
+    </div>
+{% endblock content %}  

@@ -1,0 +1,33 @@
+{% extends "home/base.html" %}
+
+{% block title %}
+    <title>
+        Create-Order
+    </title>
+{% endblock title %} 
+{% block style %}
+    <style>
+        .main{
+          margin-top:15%;
+        }
+    </style>
+{% endblock style %}
+{% block content %}
+<div class="main">
+  <form action="." method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+      {% if field in form.visible_fields %}
+        <label for="">{{field.name}}</label>
+      {% endif %}
+      {{field}}
+
+
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+   
+</div>
+{% endblock content %}

@@ -1,0 +1,92 @@
+{% extends "home/base.html" %}
+
+{% block title %}
+    <title>
+        Detail-Cart
+    </title>
+{% endblock title %} 
+
+{% block style %}
+    <style>        
+        .style-table{
+          padding:15%;
+        }
+        
+        
+        
+    
+    </style>
+{% endblock style %}
+
+
+
+{% block content %}
+<form id ="form-cart-table" action="{% url 'orders:create_order' %}" method="GET">
+  <div class="csrf_token">
+        {% csrf_token %} 
+  </div>
+  <div class="style-table">
+    
+      <table class="table cart-detail-table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Total Price</th>
+          </tr>
+        </thead>
+        <tbody id="body-cart-table">
+          {% for item in cart %}
+            <tr id="row-product_id-{{item.product.Product_id}}">
+              <th scope="row">{{forloop.counter}}</th>
+              <td>{{item.product.name}}</td>
+              <td>{{item.quantity}}</td>
+              <td>${{item.price}}</td>
+              <td>{{item.total_price}}</td>
+              <td><button type="button" class="btn btn-danger delete-btn" name="btn-delete-{{item.product.Product_id}}">X</button></td>
+            </tr>
+          {% endfor %}
+        
+          <tr>
+            <th ></th>
+            <th ></th>
+            <th ></th>
+            <th ></th>
+            <th id="total-price-box" name="ahi">${{cart.get_total_price}}</th>
+            <th><input type="submit" class="form-control" name="checkout" value="Check Out"></th>
+          </tr>
+        </tbody>
+      </table>
+    
+  </div>
+</form>
+{% endblock content %}
+
+{% block script %}
+    <script>
+      $(".delete-btn").click(function(){
+
+        var index=$(this).attr('name').lastIndexOf('-');
+        var product_id=$(this).attr('name').slice(index+1);
+        var url='/cart/delete/'+product_id+'/'
+        var csrf_token=document.querySelector('#form-cart-table .csrf_token >input').value
+        data="csrfmiddlewaretoken="+csrf_token
+        $.ajax({
+          type:'POST',
+          url:url,
+          data:data,
+          success: function(response){
+              if(response['valid']==true){
+                let tr_delete=document.getElementById('row-product_id-'+product_id)
+                document.getElementById('body-cart-table').removeChild(tr_delete)
+                document.getElementById('total-price-box').innerHTML="$"+response['total_price']              
+              }
+          }
+        })
+      })
+        
+         
+    </script>
+{% endblock script %}

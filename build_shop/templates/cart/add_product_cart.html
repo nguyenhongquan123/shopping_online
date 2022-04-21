@@ -1,0 +1,144 @@
+{% extends "home/base.html" %}
+{% load static %}
+{% block title %}
+    <title>
+        detail-{{ product.name }}
+    </title>
+{% endblock title %}
+{% block link %}
+    <link rel="stylesheet" href="{% static 'products/comments.css' %}">
+{% endblock link %}
+{% block style %}
+    <style>
+        .form-add-cart{
+            margin-top:10%;
+            background-color: aqua;
+        }
+        .form-add-cart{
+            width:500px;
+            text-align:center
+        }
+        .container >.form-add-cart{
+            margin: 15%;
+        }
+        .img-box >img{
+            width:100%;
+            height:100%;
+        }
+        .content_extends{
+            margin:20% 20%;
+        }
+    
+    </style>
+{% endblock style %}
+{% block content  %}  
+
+    <div class="submit-product">
+        <form action="."  method="POST">
+            <div class="row">
+                <div class="col-md-6 img-box" >
+                    <img src="{{ product.image.url }}" alt="">
+                </div>
+                <div class="col-md-6 form-box">
+                    {% csrf_token %}
+                    {{cart_add_form.as_p}}
+                    
+                </div>
+                <div class="meassage">
+                    {{product}}
+                </div>
+            </div>
+            <input type="hidden" name="form-type" value="card-add-form">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="recomender">
+        <div class="row">
+            {% if recommended_products %}
+                {% for product in recommended_products %}
+                <div class="col-lg-4 col-md-6"><img src="{{ product.image.url }}" alt="">
+                        <a href="{{ product.get_absolute_url }}"> {{product.name}}</a>
+                </div>
+                {% endfor %}
+            {% endif %}
+            
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-center row">
+            <div class="col-md-6">
+                <div id='box-comment' class="p-3 bg-white rounded">
+                    <h6>Reviews[8]</h6>
+                    {% for comment_object in comments %}
+                    <div class="review mt-4">
+                        <div class="d-flex flex-row comment-user"><img class="rounded" src="https://i.imgur.com/xxJl1D7.jpg" width="40">
+                            <div class="ml-2">
+                                <div class="d-flex flex-row align-items-center"><span class="name font-weight-bold">{{comment_object.user.name}}</span><span class="dot"></span><span class="date">{{comment_object.create_at}}</span></div>
+                                <div class="rating"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <p class="comment-text">{{comment_object.content_object.body}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <form id="post-comment-form">
+                    {% csrf_token %}
+                    {{post_comment_form}}
+                    <input type="hidden" name="product_id" value="{{product.Product_id}}">
+                    <input type="hidden" name="form-type" value="post-comment-form">
+                    <button id="btn-post-comment" type="submit" class="btn btn-primary">Submit</button>
+                </form>   
+                
+            </div>
+        </div>
+    </div>
+
+    
+  
+{% endblock content %}  
+
+{% block script %}
+    <script>
+        $('#post-comment-form').submit(function(e){
+            e.preventDefault()
+            var data=$(this).serialize()
+    
+            $.ajax({
+                type:'POST',
+                url:"{% url 'cart:post_comment' %}",
+                data:data,
+                success(reponse){
+                    var time=reponse['time'] 
+                    
+                    if (reponse['valid']==true){
+                        $("#box-comment").append(
+                            "<div class='review mt-4'>"+
+                                "<div class='d-flex flex-row comment-user'><img class='rounded' src='https://i.imgur.com/xxJl1D7.jpg' width='40'>"+
+                                    "<div class='ml-2'>"+
+                                        "<div class='d-flex flex-row align-items-center'><span class='name font-weight-bold'>"+'{{user.name}}'+"</span><span class='dot'></span><span class='date'>"+time
+                                            +"</span></div>"+
+                                        "<div class='rating'><i class='fa fa-star'></i><i class='fa fa-star'></i><i class='fa fa-star'></i><i class='fa fa-star'></i></div>"+
+                                    "</div>"+
+                                "</div>"+
+                                "<div class='mt-2'>"+
+                                    "<p class='comment-text'>"+$('#id_body').val()+"</p>"+
+                                "</div>"+
+                            "</div>"
+                        )
+                        $('#id_body').val("")
+                    }
+                    else{
+                        alert('Fail!')
+                    }
+                            
+
+                        
+
+                    
+                }
+            })
+        })
+    </script>
+{% endblock script %}
